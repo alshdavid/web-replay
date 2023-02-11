@@ -1,0 +1,7 @@
+match:
+  mimeTypes: 
+  - text/html
+streamLatency:
+  # When we encounter this string, pause the response
+  findString: window.performance.mark("ssr.spa.start");</script>
+  latency: 300

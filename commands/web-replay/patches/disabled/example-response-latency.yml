@@ -1,0 +1,9 @@
+patches:
+  # latencies for specific requests
+  - match:
+      urlPaths: ["/api/some/path?*"]
+    addLatency: 250
+  - match:
+      urlPaths: ["/api/another-path"]
+    addLatency: 450
+  

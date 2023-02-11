@@ -1,0 +1,12 @@
+match:
+  mimeTypes: 
+  - text/html
+  origins: 
+  - example.com
+  urlPaths:
+  - /some/path
+
+replaceText:
+  findString: <head>
+  replaceWith: |
+    <head><script>console.log('hi')</script>

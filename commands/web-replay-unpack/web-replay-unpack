@@ -1,0 +1,66 @@
+#!/usr/bin/env node
+
+/*
+  This will take an entry out of the har file and save it to disk, allowing for
+  modifications to the entry
+*/
+
+const fs = require('node:fs')
+const path = require('node:path')
+
+function readFile(filepath) {
+  return fs.readFileSync(filepath, { encoding: 'utf8' })
+}
+
+function writeFile(filepath, content) {
+  return fs.writeFileSync(filepath, content, { encoding: 'utf8' })
+}
+
+function readHarFile(filepath) {
+  return JSON.parse(readFile(filepath))
+}
+
+void async function main() {
+  let [target, entryIndex] = process.argv.slice(2)
+  
+  if (!path.isAbsolute(target)) {
+    target = path.join(process.cwd(), target)
+  }
+
+  if (entryIndex !== undefined) {
+    entryIndex = parseInt(entryIndex, 10)
+  } else {
+    entryIndex = 0
+  }
+
+  const har = readHarFile(target)
+  const entry = har.log.entries[entryIndex]
+  
+  let content = entry.response.content.text
+
+  if (entry.response.content.encoding === "base64") {
+    const b = Buffer.from(content, 'base64')
+    content = b.toString('utf-8')
+  }
+
+  const outdir = path.dirname(target)
+  const outName = path.basename(entry.request.url)
+
+  const contentType = entry.response.headers.find(h => h.name === 'content-type')
+  let extension = ''
+  if (contentType.value.includes('text/html')) {
+    extension = 'html'
+  }
+  else if (contentType.value.includes('application/javascript')) {
+    extension = 'js'
+  }
+  else if (contentType.value.includes('application/json')) {
+    extension = 'json'
+  }
+  else if (contentType.value.includes('text/css')) {
+    extension = 'css'
+  }
+
+
+  writeFile(path.join(outdir, `${outName}.${extension}`), content)
+}()

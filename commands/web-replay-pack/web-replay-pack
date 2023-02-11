@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+
+/*
+  This will take a previously unpacked entry and insert it back into a har file
+  This is to help with modifying a site
+*/
+
+const fs = require('node:fs')
+const path = require('node:path')
+
+function readFile(filepath) {
+  return fs.readFileSync(filepath, { encoding: 'utf8' })
+}
+
+function writeFile(filepath, content) {
+  return fs.writeFileSync(filepath, content, { encoding: 'utf8' })
+}
+
+function readHarFile(filepath) {
+  return JSON.parse(readFile(filepath))
+}
+
+function writeHarFile(filepath, content) {
+  return writeFile(filepath, JSON.stringify(content, null, 2))
+}
+
+
+void async function main() {
+  let [target, replaceWith, entryIndex] = process.argv.slice(2)
+  
+  if (!path.isAbsolute(target)) {
+    target = path.join(process.cwd(), target)
+  }
+
+  if (entryIndex !== undefined) {
+    entryIndex = parseInt(entryIndex, 10)
+  } else {
+    entryIndex = 0
+  }
+
+  const har = readHarFile(target)
+  const replaceWithContent = readFile(replaceWith)
+  
+  const b = Buffer.from(replaceWithContent, 'utf-8')
+
+  har.log.entries[entryIndex].response.content.encoding = "base64"
+  har.log.entries[entryIndex].response.content.text = b.toString('base64')
+
+  writeHarFile(target, har)
+}()
