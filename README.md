@@ -1,4 +1,4 @@
-# Web Replay Tool (Har File Re-player)
+# Web Replay Tool (Replay .har)
 
 <p align="center"><img src="./.docs/demo.gif" width="500" ></p>
 
