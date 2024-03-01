@@ -1,6 +1,6 @@
 # Web Replay Tool (Har File Re-player)
 
-<img src="./.docs/demo.gif" width="300" align="center" >
+<p align="center"><img src="./.docs/demo.gif" width="500" ></p>
 
 ## Usage
 
